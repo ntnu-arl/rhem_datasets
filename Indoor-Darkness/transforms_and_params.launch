@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<launch>
+ 
+    <!-- General settings -->
+    <arg name="root_tf" default="imu" /> <!-- the frame w.r.t. which other frames are expressed (imu frame published by Estimation pipeline - rovio) --> 
+    <arg name="body_tf" default="body" /> <!-- the frame w.r.t. which planning is calculated (vehicle body frame) --> 
+    <arg name="stereo_tf" default="stereo_link" /> <!-- the frame w.r.t. which the 3D pointcloud is published (stereo/depth camera frame) --> 
+
+    <arg name="map_min_x" default="0.0" />
+    <arg name="map_max_x" default="4.0" />
+    <arg name="map_min_y" default="-2.5" />
+    <arg name="map_max_y" default="2.5" />
+    <arg name="map_min_z" default="0.0" />
+    <arg name="map_max_z" default="2.5" />
+
+
+    <!-- Body Frame -to- IMU -->
+    <arg name="root2body_Tx" value="-0.06" /> 
+    <arg name="root2body_Tx" value="0.0" /> 
+    <arg name="root2body_Tz" value="0.04" /> 
+    <arg name="root2body_Rx" value="0.0" /> 
+    <arg name="root2body_Ry" value="-0.315432619" /> 
+    <arg name="root2body_Rz" value="0.0" /> 
+
+    <node name="body_tf" pkg="tf" type="static_transform_publisher" respawn="true" 
+          args="$(arg root2body_Tx) $(arg root2body_Ty) $(arg root2body_Tz) $(arg root2body_Rx) $(arg root2body_Ry) $(arg root2body_Rz)
+          $(arg root_tf) $(arg body_tf) 100" output="log"/>
+
+    <!-- Stereo Frame -to- IMU -->
+    <arg name="root2stereo_Tx" default="0.0235" />
+    <arg name="root2stereo_Ty" default="0.0" />
+    <arg name="root2stereo_Tz" default="-0.0260" />
+    <arg name="root2stereo_Rx" default="-1.57079632679" />   
+    <arg name="root2stereo_Ry" default="0.0" />
+    <arg name="root2stereo_Rz" default="-1.57079632679" /> 
+
+    <node name="stereo_tf" pkg="tf" type="static_transform_publisher" respawn="true"
+          args="$(arg root2stereo_Tx) $(arg root2stereo_Ty) $(arg root2stereo_Tz) $(arg root2stereo_Rx) $(arg root2stereo_Ry) $(arg root2stereo_Rz)
+          $(arg root_tf) $(arg stereo_tf) 100" output="log"/>
+
+    <!-- ToF0 Sensor Frame -to- IMU -->
+    <arg name="MrPC0_x" value="0.04900"/> 
+    <arg name="MrPC0_y" value="0.03342"/>
+    <arg name="MrPC0_z" value="0.00648"/>
+    <arg name="ePC0_y" value="-3.141592653589793"/>
+    <arg name="ePC0_p" value="-0.0"/>
+    <arg name="ePC0_r" value="-0.315038783628479"/>
+
+    <node name="depth_0_tf" pkg="tf" type="static_transform_publisher" respawn="true"
+          args="$(arg MrPC0_x) $(arg MrPC0_y) $(arg MrPC0_z) $(arg ePC0_y) $(arg ePC0_p) $(arg ePC0_r)
+          camera0 picoflexx_optical_frame 100" output="log"/>     
+
+</launch>

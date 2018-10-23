@@ -1,0 +1,13 @@
+###### Calibration File For Right Camera ######
+image_width: 644
+image_height: 482
+camera_name: cam1
+camera_matrix:
+  rows: 3
+  cols: 3
+  data: [374.986917077, 0, 324.466032404, 0, 374.905726225, 242.945147714, 0, 0, 1]
+distortion_model: plumb_bob
+distortion_coefficients:
+  rows: 1
+  cols: 5
+  data: [-0.2720579269844074, 0.06560038319231878, 5.706028947264399e-05, 0.0001716617664230858, 0]

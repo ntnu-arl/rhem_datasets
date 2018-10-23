@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<launch>
+ 
+    <!-- General settings -->
+    <arg name="root_tf" default="imu" /> <!-- the frame w.r.t. which other frames are expressed (imu frame published by Estimation pipeline - rovio) --> 
+    <arg name="body_tf" default="body" /> <!-- the frame w.r.t. which planning is calculated (vehicle body frame) --> 
+    <arg name="stereo_tf" default="stereo_link" /> <!-- the frame w.r.t. which the 3D pointcloud is published (stereo/depth camera frame) --> 
+
+    <arg name="map_min_x" default="0.0" />
+    <arg name="map_max_x" default="50.0" />
+    <arg name="map_min_y" default="-2.5" />
+    <arg name="map_max_y" default="2.5" />
+    <arg name="map_min_z" default="0.0" />
+    <arg name="map_max_z" default="5.0" />
+
+
+    <!-- Body Frame -to- IMU -->
+    <arg name="root2body_Tx" value="-0.06" /> 
+    <arg name="root2body_Tx" value="0.0" /> 
+    <arg name="root2body_Tz" value="0.04" /> 
+    <arg name="root2body_Rx" value="0.0" /> 
+    <arg name="root2body_Ry" value="-0.315432619" /> 
+    <arg name="root2body_Rz" value="0.0" /> 
+
+    <node name="body_tf" pkg="tf" type="static_transform_publisher" respawn="true" 
+          args="$(arg root2body_Tx) $(arg root2body_Ty) $(arg root2body_Tz) $(arg root2body_Rx) $(arg root2body_Ry) $(arg root2body_Rz)
+          $(arg root_tf) $(arg body_tf) 100" output="log"/>
+
+    <!-- Stereo Frame -to- IMU -->
+    <arg name="root2stereo_Tx" default="0.0235" />
+    <arg name="root2stereo_Ty" default="0.0" />
+    <arg name="root2stereo_Tz" default="-0.0260" />
+    <arg name="root2stereo_Rx" default="-1.57079632679" /> 
+    <arg name="root2stereo_Ry" default="0.008726646" />
+    <arg name="root2stereo_Rz" default="-1.57079632679" />   
+
+    <node name="stereo_tf" pkg="tf" type="static_transform_publisher" respawn="true"
+          args="$(arg root2stereo_Tx) $(arg root2stereo_Ty) $(arg root2stereo_Tz) $(arg root2stereo_Rx) $(arg root2stereo_Ry) $(arg root2stereo_Rz)
+          $(arg root_tf) $(arg stereo_tf) 100" output="log"/>
+
+    <!-- ToF Sensor Frames: ToF0-to-IMU ToF1-to-ToF0 ToF2-to-ToF0 -->
+    <arg name="MrPC00_x" value="0.01849893452634"/> 
+    <arg name="MrPC00_y" value="-0.01371053330141"/>
+    <arg name="MrPC00_z" value="0.06227615563473"/>
+    <arg name="ePC00_qx" value="0.003264900997739"/>
+    <arg name="ePC00_qy" value="-0.005305924398147"/>
+    <arg name="ePC00_qz" value="0.999980371892"/>
+    <arg name="ePC00_qw" value="0.0006658967504277"/>
+
+    <arg name="MrPC01_x" value="0.0347702801228"/>
+    <arg name="MrPC01_y" value="-0.0197201687843"/>
+    <arg name="MrPC01_z" value="0.0138717666268"/>
+    <arg name="ePC01_qx" value="-0.00972647153862"/>
+    <arg name="ePC01_qy" value="0.455759354914"/>
+    <arg name="ePC01_qz" value="-0.104504929167"/>
+    <arg name="ePC01_qw" value="0.883893390596"/>
+
+    <arg name="MrPC02_x" value="-0.1270519346"/>
+    <arg name="MrPC02_y" value="-0.00786318816245"/>
+    <arg name="MrPC02_z" value="-0.0235436558723"/>
+    <arg name="ePC02_qx" value="-0.443427988689"/>
+    <arg name="ePC02_qy" value="0.0144655455893"/>
+    <arg name="ePC02_qz" value="0.890990334434"/>
+    <arg name="ePC02_qw" value="-0.0964292008815"/>
+
+    <node name="depth_00_tf" pkg="tf" type="static_transform_publisher" respawn="true"
+          args="$(arg MrPC00_x) $(arg MrPC00_y) $(arg MrPC00_z) $(arg ePC00_qx) $(arg ePC00_qy) $(arg ePC00_qz) $(arg ePC00_qw)
+          $(arg stereo_tf) picoflexx_0_optical_frame 100" output="log"/>    
+    <node name="depth_01_tf" pkg="tf" type="static_transform_publisher" respawn="true"
+          args="$(arg MrPC01_x) $(arg MrPC01_y) $(arg MrPC01_z) $(arg ePC01_qx) $(arg ePC01_qy) $(arg ePC01_qz) $(arg ePC01_qw)
+          picoflexx_0_optical_frame picoflexx_1_optical_frame 100" output="log"/>      
+    <node name="depth_02_tf" pkg="tf" type="static_transform_publisher" respawn="true"
+          args="$(arg MrPC02_x) $(arg MrPC02_y) $(arg MrPC02_z) $(arg ePC02_qx) $(arg ePC02_qy) $(arg ePC02_qz) $(arg ePC02_qw)
+          picoflexx_0_optical_frame picoflexx_2_optical_frame 100" output="log"/>      
+
+</launch>

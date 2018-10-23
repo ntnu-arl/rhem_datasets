@@ -1,0 +1,13 @@
+###### Calibration File For Left Camera ######
+image_width: 853
+image_height: 480
+camera_name: cam0
+camera_matrix:
+  rows: 3
+  cols: 3
+  data: [467.971273773, 0.0, 425.731378022, 0.0, 468.688300278, 223.847780698, 0.0, 0.0, 1.0]
+distortion_model: plumb_bob
+distortion_coefficients:
+  rows: 1
+  cols: 5
+  data:  [-0.17411005194338586, 0.027914817852332827, -4.6227456084963e-05, -0.0006590536370359521, 0.0]
